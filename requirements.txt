@@ -61,7 +61,7 @@ spacy-legacy==3.0.12
 spacy-loggers==1.0.5
 spellchecker==0.4
 srsly==2.4.8
-streamlit==1.37.0
+streamlit==1.37.1
 streamlit-pdf-viewer==0.0.14
 streamlit_pdf_reader==0.0.5
 tenacity==8.5.0
