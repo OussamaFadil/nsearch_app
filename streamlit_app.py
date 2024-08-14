@@ -17,10 +17,10 @@ spell = SpellChecker(language='fr')
 # Path dictionary for different categories
 pdf_files = {
     "ELECTRICITE": [
-        ("Contenu Electricité", "/workspaces/nsearch_app/.github/assets/pdfs/Electricite")
+        ("Contenu Electricité", ".github/assets/pdfs/Electricite")
     ],
     "FLUIDE": [
-        ("Contenu Fluide", "/workspaces/nsearch_app/.github/assets/pdfs/Fluide")
+        ("Contenu Fluide", ".github/assets/pdfs/Fluide")
     ],
     "DOMAINE SPECIFIQUE": []
 }
