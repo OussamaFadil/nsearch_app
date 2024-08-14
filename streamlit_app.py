@@ -159,7 +159,6 @@ def show_registration_form():
 def show_main_content():
     # Affichage du logo
     image_path = "/workspaces/nsearch_app/.github/assets/NSearch.jpeg"
-    #image_path = "https://github.com/OussamaFadil/nsearch_app/blob/main/.github/assets/NSearch.jpeg"
     if os.path.exists(image_path):
         image = Image.open(image_path)
         image = image.resize((100, 75), resample=Image.LANCZOS)

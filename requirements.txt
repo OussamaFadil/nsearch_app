@@ -31,6 +31,7 @@ packaging==24.1
 pandas==2.2.2
 pdfminer==20191125
 pillow==10.4.0
+pipdeptree==2.23.1
 preshed==3.0.9
 protobuf==5.27.2
 pyarrow==17.0.0
