@@ -17,7 +17,7 @@ spell = SpellChecker(language='fr')
 # Path dictionary for different categories
 pdf_files = {
     "ELECTRICITE": [
-        ("Contenu Electricité", "/workspaces/nsearch_app/.github/assets/pdfs/Electricite")
+        ("Contenu Electricité", "https://github.com/OussamaFadil/nsearch_app/tree/main/.github/assets/pdfs/Electricite")
     ],
     "FLUIDE": [
         ("Contenu Fluide", "/workspaces/nsearch_app/.github/assets/pdfs/Fluide")
