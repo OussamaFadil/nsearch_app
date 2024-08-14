@@ -11,6 +11,10 @@ click==8.1.7
 cloudpathlib==0.18.1
 confection==0.1.5
 cymem==2.0.8
+elastic-transport==8.15.0
+elasticsearch==8.15.0
+es-indexer==0.1
+ez_setup==0.9
 fr-core-news-lg @ https://github.com/explosion/spacy-models/releases/download/fr_core_news_lg-3.7.0/fr_core_news_lg-3.7.0-py3-none-any.whl#sha256=c2d98eb9073ff0f3d865179448e7f1868f27b2643c0e7215acc2438cd9eae554
 gitdb==4.0.11
 GitPython==3.1.41
