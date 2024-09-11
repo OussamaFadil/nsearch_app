@@ -180,10 +180,15 @@ def search_in_pdf(pdf_path, search_text, corrected_search_text):
 
 
 
-def extract_page(pdf_path, page_number):
+def extract_page(pdf_path, page_number, paragraph):
     """Extract and return a specific page from the PDF as an image."""
     doc = fitz.open(pdf_path)
     page = doc.load_page(page_number - 1)  # Page numbers are 0-based in PyMuPDF
+     # Search for the paragraph in the page text
+    text_instances = page.search_for(paragraph)
+    for inst in text_instances:
+        highlight = page.add_highlight_annot(inst)
+        highlight.update()
     pix = page.get_pixmap()
     img_data = pix.tobytes("png")
     return img_data
@@ -294,7 +299,7 @@ def show_main_content():
                                 with st.expander(link_text):
                                     st.write(f"**{link_text}**")
                                     st.write(f"{paragraph}")
-                                    img_data = extract_page(pdf_path, page_num)
+                                    img_data = extract_page(pdf_path, page_num, paragraph)
                                     st.image(img_data, caption=f"Page {page_num} de {file_name}")
                                     with open(pdf_path, "rb") as pdf_file:
                                         st.download_button(
@@ -342,7 +347,7 @@ def show_main_content():
                                     with st.expander(link_text):
                                         st.write(f"**{link_text}**")
                                         st.write(f"{paragraph}")
-                                        img_data = extract_page(pdf_path, page_num)
+                                        img_data = extract_page(pdf_path, page_num, paragraph)
                                         st.image(img_data, caption=f"Page {page_num} de {file_name}")
                                         with open(pdf_path, "rb") as pdf_file:
                                             st.download_button(
