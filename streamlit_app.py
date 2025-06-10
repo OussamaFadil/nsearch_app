@@ -219,15 +219,25 @@ def show_registration_form():
             st.session_state.show_login = True
             st.session_state.show_main_content = False
 
+#def show_main_content():
+#    # Affichage du logo
+#    image_path = ".github/assets/Logo.jpg"
+#    if os.path.exists(image_path):
+#        image = Image.open(image_path)
+#        image = image.resize((100, 75), resample=Image.LANCZOS)
+#        st.image(image, width=100)
+#    else:
+#        st.error(f"Image not found at path: {image_path}")
+
 def show_main_content():
-    # Affichage du logo
     image_path = ".github/assets/Logo.jpg"
     if os.path.exists(image_path):
         image = Image.open(image_path)
-        image = image.resize((100, 75), resample=Image.LANCZOS)
-        st.image(image, width=100)
+        image = image.resize((300, 225), resample=Image.LANCZOS)  # agrandir ici
+        st.image(image, use_column_width=False)  # désactive l'élargissement automatique
     else:
         st.error(f"Image not found at path: {image_path}")
+
 
     # Salutation text
     salutation_text = ("Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.\n"
