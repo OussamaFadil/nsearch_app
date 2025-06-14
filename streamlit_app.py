@@ -368,12 +368,11 @@ def show_main_content():
                                                 label="Télécharger le PDF complet",
                                                 data=pdf_file,
                                                 file_name=file_name,
-                                                #key=f"download_button_{i}"
-                                                key=f"download_button_{i}_{file_name}"
+                                                key=f"download_button_{i}"
+                                                #key=f"download_button_{i}_{file_name}"
                                             )
                                 else:
-                                    #st.error(f"Résultat inattendu au résultat {i}: {result}")
-                                    st.warning(f"Résultat inattendu au résultat {i}: {result}")
+                                    st.error(f"Résultat inattendu au résultat {i}: {result}")
                         else:
                             st.write("Aucun résultat trouvé.")
 
