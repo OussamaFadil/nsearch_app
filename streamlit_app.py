@@ -364,22 +364,16 @@ def show_main_content():
                                         img_data = extract_page(pdf_path, page_num, paragraph)
                                         st.image(img_data, caption=f"Page {page_num} de {file_name}")
                                         with open(pdf_path, "rb") as pdf_file:
-                                            #st.download_button(
-                                            #    label="Télécharger le PDF complet",
-                                            #    data=pdf_file,
-                                            #    file_name=file_name,
-                                            #    key=f"download_button_{i}"
-                                            #)
-
                                             st.download_button(
                                                 label="Télécharger le PDF complet",
                                                 data=pdf_file,
                                                 file_name=file_name,
-                                                key=f"download_button_{os.path.basename(pdf_path)}_{page_num}_{i}"
+                                                #key=f"download_button_{i}"
+                                                key=f"download_button_{i}_{file_name}"
                                             )
-
                                 else:
-                                    st.error(f"Résultat inattendu au résultat {i}: {result}")
+                                    #st.error(f"Résultat inattendu au résultat {i}: {result}")
+                                    st.warning(f"Résultat inattendu au résultat {i}: {result}")
                         else:
                             st.write("Aucun résultat trouvé.")
 
