@@ -17,10 +17,15 @@ def register_user(username, password, email, full_name):
         conn.close()
 
 def authenticate_user(username, password):
+    #print(username, password)
+    #print('salamo alaikom')
     conn = sqlite3.connect('users.db')
     c = conn.cursor()
     c.execute("SELECT password FROM users WHERE username=?", (username,))
+    # c.execute("SELECT *FROM users ")
     result = c.fetchone()
+    # result = c.fetchall()
+    # print(result[0])
     conn.close()
     if result and check_password_hash(result[0], password):
         return True
