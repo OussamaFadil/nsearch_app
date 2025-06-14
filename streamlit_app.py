@@ -276,8 +276,9 @@ def show_main_content():
 
         #Search form
         st.write("Rechercher dans les documents PDF")
-        search_text = st.text_input("Texte à rechercher :")
-        if st.button("Rechercher"):
+        search_text = st.text_input("Texte à rechercher :", key="search_input")
+        #if st.button("Rechercher"):
+        if st.button("Rechercher") or search_text and st.session_state.get("search_triggered") != search_text:
             if search_text:
                 # Prétraiter le texte et obtenir la version corrigée
                 corrected_search_text, _ = preprocess_text(search_text)
@@ -363,12 +364,20 @@ def show_main_content():
                                         img_data = extract_page(pdf_path, page_num, paragraph)
                                         st.image(img_data, caption=f"Page {page_num} de {file_name}")
                                         with open(pdf_path, "rb") as pdf_file:
+                                            #st.download_button(
+                                            #    label="Télécharger le PDF complet",
+                                            #    data=pdf_file,
+                                            #    file_name=file_name,
+                                            #    key=f"download_button_{i}"
+                                            #)
+
                                             st.download_button(
                                                 label="Télécharger le PDF complet",
                                                 data=pdf_file,
                                                 file_name=file_name,
-                                                key=f"download_button_{i}"
+                                                key=f"download_button_{os.path.basename(pdf_path)}_{page_num}_{i}"
                                             )
+
                                 else:
                                     st.error(f"Résultat inattendu au résultat {i}: {result}")
                         else:
