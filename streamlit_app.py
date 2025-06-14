@@ -10,7 +10,7 @@ from spellchecker import SpellChecker
 from PIL import Image
 import tempfile
 #
-import io
+#import io
 #
 
 # Initialize SpaCy and spellchecker
@@ -274,7 +274,7 @@ def show_main_content():
                 for pdf_name in pdf_files_list:
                     st.write(f"- {pdf_name}")
 
-         Search form
+        #Search form
         st.write("Rechercher dans les documents PDF")
         search_text = st.text_input("Texte à rechercher :")
         if st.button("Rechercher"):
@@ -303,26 +303,26 @@ def show_main_content():
                         #                file_name=file_name,
                         #                key=f"download_button_{i}"
                         #            )
-                        for i, result in enumerate(results, start=1):
-                            if len(result) == 3:
-                                pdf_path, page_num, paragraph = result
-                                file_name = os.path.basename(pdf_path)
-                                link_text = f"Fichier : {file_name}, Page : {page_num}"
-                                
-                                with st.expander(link_text):
-                                    st.write(f"**{link_text}**")
-                                    st.write(f"{paragraph}")
-                                    img_data = extract_page(pdf_path, page_num, paragraph)
-                                    st.image(img_data, caption=f"Page {page_num} de {file_name}")
-                                    with open(pdf_path, "rb") as pdf_file:
-                                        st.download_button(
-                                            label="Télécharger le PDF complet",
-                                            data=pdf_file,
-                                            file_name=file_name,
-                                            key=f"download_button_{i}"
-                                        )
-                            else:
-                                st.error(f"Résultat inattendu au résultat {i}: {result}")
+                        #for i, result in enumerate(results, start=1):
+                        #    if len(result) == 3:
+                        #        pdf_path, page_num, paragraph = result
+                        #        file_name = os.path.basename(pdf_path)
+                        #        link_text = f"Fichier : {file_name}, Page : {page_num}"
+                        #        
+                        #        with st.expander(link_text):
+                        #            st.write(f"**{link_text}**")
+                        #            st.write(f"{paragraph}")
+                        #            img_data = extract_page(pdf_path, page_num, paragraph)
+                        #            st.image(img_data, caption=f"Page {page_num} de {file_name}")
+                        #            with open(pdf_path, "rb") as pdf_file:
+                        #                st.download_button(
+                        #                    label="Télécharger le PDF complet",
+                        #                    data=pdf_file,
+                        #                    file_name=file_name,
+                        #                    key=f"download_button_{i}"
+                        #                )
+                        #    else:
+                        #        st.error(f"Résultat inattendu au résultat {i}: {result}")s
                     #else:
                     #    # Recherche avec le texte corrigé uniquement si aucun résultat n'est trouvé avec le texte original
                     #    corrected_results = search_and_save_to_db(corrected_search_text, corrected_search_text, selected_category)
@@ -385,7 +385,7 @@ def show_main_content():
         ##
 
 
-        st.write("Rechercher dans les documents PDF")
+        #st.write("Rechercher dans les documents PDF")
         #
         # Initialiser les variables dans session_state si ce n'est pas déjà fait
         #if "search_results" not in st.session_state:
