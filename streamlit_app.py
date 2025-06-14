@@ -369,7 +369,6 @@ def show_main_content():
                                                 data=pdf_file,
                                                 file_name=file_name,
                                                 key=f"download_button_{i}"
-                                                #key=f"download_button_{i}_{file_name}"
                                             )
                                 else:
                                     st.error(f"Résultat inattendu au résultat {i}: {result}")
