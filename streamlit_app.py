@@ -158,8 +158,6 @@ def show_main_content():
         image = Image.open(image_path)
         image = image.resize((300, 225), resample=Image.LANCZOS)
         st.image(image, use_column_width=False)
-    else:
-        st.error(f"Image introuvable : {image_path}")
 
     st.write("Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.")
     st.write("Veuillez sélectionner un des dossiers ci-dessous.")
@@ -188,41 +186,58 @@ def show_main_content():
                 for pdf_name in pdf_files_list:
                     st.write(f"- {pdf_name}")
 
-        st.write("Rechercher dans les documents PDF")
+        # Initialiser les variables de session
+        if "last_query" not in st.session_state:
+            st.session_state.last_query = ""
+        if "results" not in st.session_state:
+            st.session_state.results = []
+        if "predictions" not in st.session_state:
+            st.session_state.predictions = {}
+
+        # Formulaire de recherche
         with st.form(key="search_form"):
             search_text = st.text_input("Texte à rechercher :", key="search_input")
             submitted = st.form_submit_button("Rechercher")
 
-        if submitted and search_text:
+        # Lancer la recherche seulement si c'est une nouvelle requête
+        if submitted and search_text.strip() and search_text != st.session_state.last_query:
             processed_text, corrected_text, predictions = preprocess_text(search_text)
-            if predictions:
-                for original, corrected in predictions.items():
-                    st.info(f"Prédiction du mot : '{original}' → '{corrected}'")
+
+            st.session_state.last_query = search_text
+            st.session_state.predictions = predictions
 
             with st.spinner("Recherche en cours..."):
                 results = search_and_save_to_db(search_text, processed_text, selected_category)
+                st.session_state.results = results
 
-            if results:
-                st.write(f"Résultats trouvés : {len(results)}")
-                for i, result in enumerate(results, start=1):
-                    if len(result) == 3:
-                        pdf_path, page_num, paragraph = result
-                        file_name = os.path.basename(pdf_path)
-                        link_text = f"Fichier : {file_name}, Page : {page_num}"
-                        with st.expander(link_text):
-                            st.write(f"**{link_text}**")
-                            st.write(f"{paragraph}")
-                            img_data = extract_page(pdf_path, page_num, paragraph)
-                            st.image(img_data, caption=f"Page {page_num} de {file_name}")
-                            with open(pdf_path, "rb") as pdf_file:
-                                st.download_button(
-                                    label="Télécharger le PDF complet",
-                                    data=pdf_file,
-                                    file_name=file_name,
-                                    key=f"download_button_{i}"
-                                )
-            else:
-                st.warning("Aucun résultat trouvé.")
+        # Afficher les prédictions (corrections orthographiques)
+        if st.session_state.predictions:
+            for original, corrected in st.session_state.predictions.items():
+                st.info(f"Prédiction du mot : '{original}' → '{corrected}'")
+
+        # Afficher les résultats précédents si existants
+        if st.session_state.results:
+            st.write(f"Résultats trouvés : {len(st.session_state.results)}")
+            for i, result in enumerate(st.session_state.results, start=1):
+                if len(result) == 3:
+                    pdf_path, page_num, paragraph = result
+                    file_name = os.path.basename(pdf_path)
+                    link_text = f"Fichier : {file_name}, Page : {page_num}"
+                    with st.expander(link_text):
+                        st.write(f"**{link_text}**")
+                        st.write(f"{paragraph}")
+                        img_data = extract_page(pdf_path, page_num, paragraph)
+                        st.image(img_data, caption=f"Page {page_num} de {file_name}")
+                        with open(pdf_path, "rb") as pdf_file:
+                            st.download_button(
+                                label="Télécharger le PDF complet",
+                                data=pdf_file,
+                                file_name=file_name,
+                                key=f"download_button_{i}"
+                            )
+        elif submitted:
+            st.warning("Aucun résultat trouvé.")
+
 
 def main():
     if 'user' in st.session_state and st.session_state.get('show_main_content', False):
