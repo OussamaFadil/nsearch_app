@@ -188,7 +188,7 @@ def show_registration_form():
 
 
 def show_main_content():
-    image_path = ".github/assets/NSEARCH.jpg"
+    image_path = ".github/assets/NSEARCH.jpeg"
     if os.path.exists(image_path):
         image = Image.open(image_path)
         image = image.resize((300, 225), resample=Image.LANCZOS)  # agrandir ici
