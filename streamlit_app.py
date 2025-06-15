@@ -187,6 +187,110 @@ def show_registration_form():
             st.session_state.show_main_content = False
 
 
+##def show_main_content():
+##    image_path = ".github/assets/NSEARCH.jpeg"
+##    if os.path.exists(image_path):
+##        image = Image.open(image_path)
+##        image = image.resize((300, 225), resample=Image.LANCZOS)
+##        st.image(image, use_column_width=False)
+##    else:
+##        st.error(f"Image not found at path: {image_path}")
+##
+##    salutation_text = (
+##        "Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.\n"
+##        "S'il vous plaît sélectionnez un des dossiers ci-dessous."
+##    )
+##    st.write(salutation_text)
+##
+##    categories = list(pdf_files.keys())
+##    selected_category = st.selectbox("Sélectionnez un domaine :", [""] + categories)
+##
+##    if selected_category:
+##        st.write(f"Vous avez sélectionné : {selected_category}")
+##
+##        if selected_category == "DOMAINE SPECIFIQUE":
+##            uploaded_files = st.file_uploader("Ajouter des fichiers PDF", type="pdf", accept_multiple_files=True)
+##            if uploaded_files:
+##                for uploaded_file in uploaded_files:
+##                    with tempfile.NamedTemporaryFile(delete=False, suffix=".pdf") as tmp_file:
+##                        tmp_file.write(uploaded_file.read())
+##                        tmp_path = tmp_file.name
+##                        title = os.path.basename(tmp_path)
+##                        pdf_files["DOMAINE SPECIFIQUE"].append((title, tmp_path))
+##
+##        folder_path = [folder_path for title, folder_path in pdf_files.get(selected_category, []) if os.path.isdir(folder_path)]
+##        if folder_path:
+##            pdf_files_list = list_pdfs_in_folder(folder_path[0])
+##            if pdf_files_list:
+##                st.write("Documents disponibles :")
+##                for pdf_name in pdf_files_list:
+##                    st.write(f"- {pdf_name}")
+##
+##        st.write("Rechercher dans les documents PDF")
+##        search_text = st.text_input("Texte à rechercher :", key="search_input")
+##
+##        if st.button("Rechercher") or (search_text and st.session_state.get("search_triggered") != search_text):
+##            if search_text:
+##                st.session_state["search_triggered"] = search_text
+##
+##                # ✅ Correction ici : inversion des variables
+##                processed_text, corrected_search_text = preprocess_text(search_text)
+##
+##                with st.spinner("Recherche en cours..."):
+##                    results = search_and_save_to_db(search_text, corrected_search_text, selected_category)
+##
+##                    if results:
+##                        st.write(f"Résultats trouvés : {len(results)}")
+##                        for i, result in enumerate(results, start=1):
+##                            if len(result) == 3:
+##                                pdf_path, page_num, paragraph = result
+##                                file_name = os.path.basename(pdf_path)
+##                                link_text = f"Fichier : {file_name}, Page : {page_num}"
+##
+##                                with st.expander(link_text):
+##                                    st.write(f"**{link_text}**")
+##                                    st.write(f"{paragraph}")
+##                                    img_data = extract_page(pdf_path, page_num, paragraph)
+##                                    st.image(img_data, caption=f"Page {page_num} de {file_name}")
+##                                    with open(pdf_path, "rb") as pdf_file:
+##                                        st.download_button(
+##                                            label="Télécharger le PDF complet",
+##                                            data=pdf_file,
+##                                            file_name=file_name,
+##                                            key=f"download_button_{i}"
+##                                        )
+##                            else:
+##                                st.error(f"Résultat inattendu au résultat {i}: {result}")
+##                    else:
+##                        # Recherche avec texte corrigé uniquement si aucun résultat avec le texte brut
+##                        corrected_results = search_and_save_to_db(corrected_search_text, corrected_search_text, selected_category)
+##
+##                        if corrected_results:
+##                            st.write(f"Résultats trouvés pour le mot corrigé '{corrected_search_text}' : {len(corrected_results)}")
+##                            for i, result in enumerate(corrected_results, start=1):
+##                                if len(result) == 3:
+##                                    pdf_path, page_num, paragraph = result
+##                                    file_name = os.path.basename(pdf_path)
+##                                    link_text = f"Fichier : {file_name}, Page : {page_num}"
+##
+##                                    with st.expander(link_text):
+##                                        st.write(f"**{link_text}**")
+##                                        st.write(f"{paragraph}")
+##                                        img_data = extract_page(pdf_path, page_num, paragraph)
+##                                        st.image(img_data, caption=f"Page {page_num} de {file_name}")
+##                                        with open(pdf_path, "rb") as pdf_file:
+##                                            st.download_button(
+##                                                label="Télécharger le PDF complet",
+##                                                data=pdf_file,
+##                                                file_name=file_name,
+##                                                key=f"download_button_corrected_{i}"
+##                                            )
+##                                else:
+##                                    st.error(f"Résultat inattendu au résultat {i}: {result}")
+##                        else:
+##                            st.write("Aucun résultat trouvé.")
+
+
 def show_main_content():
     image_path = ".github/assets/NSEARCH.jpeg"
     if os.path.exists(image_path):
@@ -196,11 +300,14 @@ def show_main_content():
     else:
         st.error(f"Image not found at path: {image_path}")
 
-    salutation_text = (
-        "Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.\n"
-        "S'il vous plaît sélectionnez un des dossiers ci-dessous."
-    )
-    st.write(salutation_text)
+    st.write("Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.")
+    st.write("Veuillez sélectionner un des dossiers ci-dessous.")
+
+    # Init state if not set
+    if "search_results" not in st.session_state:
+        st.session_state.search_results = []
+    if "last_search_query" not in st.session_state:
+        st.session_state.last_search_query = ""
 
     categories = list(pdf_files.keys())
     selected_category = st.selectbox("Sélectionnez un domaine :", [""] + categories)
@@ -229,66 +336,48 @@ def show_main_content():
         st.write("Rechercher dans les documents PDF")
         search_text = st.text_input("Texte à rechercher :", key="search_input")
 
-        if st.button("Rechercher") or (search_text and st.session_state.get("search_triggered") != search_text):
-            if search_text:
-                st.session_state["search_triggered"] = search_text
+        if st.button("Rechercher"):
+            if search_text.strip() != st.session_state.last_search_query:
+                # Mise à jour de la requête enregistrée
+                st.session_state.last_search_query = search_text.strip()
 
-                # ✅ Correction ici : inversion des variables
-                processed_text, corrected_search_text = preprocess_text(search_text)
-
+                # Prétraitement et recherche
+                processed_text, corrected_text = preprocess_text(search_text.strip())
                 with st.spinner("Recherche en cours..."):
-                    results = search_and_save_to_db(search_text, corrected_search_text, selected_category)
+                    results = search_and_save_to_db(search_text.strip(), processed_text, selected_category)
 
                     if results:
-                        st.write(f"Résultats trouvés : {len(results)}")
-                        for i, result in enumerate(results, start=1):
-                            if len(result) == 3:
-                                pdf_path, page_num, paragraph = result
-                                file_name = os.path.basename(pdf_path)
-                                link_text = f"Fichier : {file_name}, Page : {page_num}"
-
-                                with st.expander(link_text):
-                                    st.write(f"**{link_text}**")
-                                    st.write(f"{paragraph}")
-                                    img_data = extract_page(pdf_path, page_num, paragraph)
-                                    st.image(img_data, caption=f"Page {page_num} de {file_name}")
-                                    with open(pdf_path, "rb") as pdf_file:
-                                        st.download_button(
-                                            label="Télécharger le PDF complet",
-                                            data=pdf_file,
-                                            file_name=file_name,
-                                            key=f"download_button_{i}"
-                                        )
-                            else:
-                                st.error(f"Résultat inattendu au résultat {i}: {result}")
+                        st.session_state.search_results = results
                     else:
-                        # Recherche avec texte corrigé uniquement si aucun résultat avec le texte brut
-                        corrected_results = search_and_save_to_db(corrected_search_text, corrected_search_text, selected_category)
+                        corrected_results = search_and_save_to_db(corrected_text, corrected_text, selected_category)
+                        st.session_state.search_results = corrected_results if corrected_results else []
 
-                        if corrected_results:
-                            st.write(f"Résultats trouvés pour le mot corrigé '{corrected_search_text}' : {len(corrected_results)}")
-                            for i, result in enumerate(corrected_results, start=1):
-                                if len(result) == 3:
-                                    pdf_path, page_num, paragraph = result
-                                    file_name = os.path.basename(pdf_path)
-                                    link_text = f"Fichier : {file_name}, Page : {page_num}"
+        # Affichage des résultats enregistrés
+        if st.session_state.search_results:
+            st.write(f"Résultats trouvés : {len(st.session_state.search_results)}")
+            for i, result in enumerate(st.session_state.search_results, start=1):
+                if len(result) == 3:
+                    pdf_path, page_num, paragraph = result
+                    file_name = os.path.basename(pdf_path)
+                    link_text = f"Fichier : {file_name}, Page : {page_num}"
 
-                                    with st.expander(link_text):
-                                        st.write(f"**{link_text}**")
-                                        st.write(f"{paragraph}")
-                                        img_data = extract_page(pdf_path, page_num, paragraph)
-                                        st.image(img_data, caption=f"Page {page_num} de {file_name}")
-                                        with open(pdf_path, "rb") as pdf_file:
-                                            st.download_button(
-                                                label="Télécharger le PDF complet",
-                                                data=pdf_file,
-                                                file_name=file_name,
-                                                key=f"download_button_corrected_{i}"
-                                            )
-                                else:
-                                    st.error(f"Résultat inattendu au résultat {i}: {result}")
-                        else:
-                            st.write("Aucun résultat trouvé.")
+                    with st.expander(link_text):
+                        st.write(f"**{link_text}**")
+                        st.write(f"{paragraph}")
+                        img_data = extract_page(pdf_path, page_num, paragraph)
+                        st.image(img_data, caption=f"Page {page_num} de {file_name}")
+                        with open(pdf_path, "rb") as pdf_file:
+                            st.download_button(
+                                label="Télécharger le PDF complet",
+                                data=pdf_file,
+                                file_name=file_name,
+                                key=f"download_button_{i}"
+                            )
+                else:
+                    st.warning(f"Résultat inattendu : {result}")
+        else:
+            if st.session_state.last_search_query:
+                st.info("Aucun résultat trouvé pour cette recherche.")
 
 
 
