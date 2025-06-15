@@ -153,7 +153,7 @@ def show_registration_form():
             st.session_state.show_main_content = False
 
 def show_main_content():
-    image_path = ".github/assets/Logo.jpg"
+    image_path = ".github/assets/NSEARCH.jpeg"
     if os.path.exists(image_path):
         image = Image.open(image_path)
         image = image.resize((300, 225), resample=Image.LANCZOS)
