@@ -189,9 +189,11 @@ def show_main_content():
                     st.write(f"- {pdf_name}")
 
         st.write("Rechercher dans les documents PDF")
-        search_text = st.text_input("Texte à rechercher :", key="search_input")
+        with st.form(key="search_form"):
+            search_text = st.text_input("Texte à rechercher :", key="search_input")
+            submitted = st.form_submit_button("Rechercher")
 
-        if st.button("Rechercher") and search_text:
+        if submitted and search_text:
             processed_text, corrected_text, predictions = preprocess_text(search_text)
             if predictions:
                 for original, corrected in predictions.items():
