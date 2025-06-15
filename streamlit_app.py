@@ -191,18 +191,17 @@ def show_main_content():
     image_path = ".github/assets/NSEARCH.jpeg"
     if os.path.exists(image_path):
         image = Image.open(image_path)
-        image = image.resize((300, 225), resample=Image.LANCZOS)  # agrandir ici
-        st.image(image, use_column_width=False)  # désactive l'élargissement automatique
+        image = image.resize((300, 225), resample=Image.LANCZOS)
+        st.image(image, use_column_width=False)
     else:
         st.error(f"Image not found at path: {image_path}")
 
-
-    # Salutation text
-    salutation_text = ("Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.\n"
-                       "S'il vous plaît sélectionnez un des dossiers ci-dessous.")
+    salutation_text = (
+        "Bienvenue sur le moteur de recherche sur les normes et réglementations techniques.\n"
+        "S'il vous plaît sélectionnez un des dossiers ci-dessous."
+    )
     st.write(salutation_text)
 
-    # Create a selectbox for categories based on the pdf_files dictionary
     categories = list(pdf_files.keys())
     selected_category = st.selectbox("Sélectionnez un domaine :", [""] + categories)
 
@@ -210,7 +209,6 @@ def show_main_content():
         st.write(f"Vous avez sélectionné : {selected_category}")
 
         if selected_category == "DOMAINE SPECIFIQUE":
-            # Add PDFs to "DOMAINE SPECIFIQUE"
             uploaded_files = st.file_uploader("Ajouter des fichiers PDF", type="pdf", accept_multiple_files=True)
             if uploaded_files:
                 for uploaded_file in uploaded_files:
@@ -220,7 +218,6 @@ def show_main_content():
                         title = os.path.basename(tmp_path)
                         pdf_files["DOMAINE SPECIFIQUE"].append((title, tmp_path))
 
-        # List the PDF files in the selected category's folder
         folder_path = [folder_path for title, folder_path in pdf_files.get(selected_category, []) if os.path.isdir(folder_path)]
         if folder_path:
             pdf_files_list = list_pdfs_in_folder(folder_path[0])
@@ -229,23 +226,43 @@ def show_main_content():
                 for pdf_name in pdf_files_list:
                     st.write(f"- {pdf_name}")
 
-        #Search form
         st.write("Rechercher dans les documents PDF")
         search_text = st.text_input("Texte à rechercher :", key="search_input")
-        if st.button("Rechercher") or search_text and st.session_state.get("search_triggered") != search_text:
-            if search_text:
-                # Prétraiter le texte et obtenir la version corrigée
-                corrected_search_text, _ = preprocess_text(search_text)
 
-                # Recherche en utilisant le texte original
+        if st.button("Rechercher") or (search_text and st.session_state.get("search_triggered") != search_text):
+            if search_text:
+                st.session_state["search_triggered"] = search_text
+
+                # ✅ Correction ici : inversion des variables
+                processed_text, corrected_search_text = preprocess_text(search_text)
+
                 with st.spinner("Recherche en cours..."):
                     results = search_and_save_to_db(search_text, corrected_search_text, selected_category)
 
                     if results:
                         st.write(f"Résultats trouvés : {len(results)}")
-                        st.write("Aucun résultat trouvé.")
+                        for i, result in enumerate(results, start=1):
+                            if len(result) == 3:
+                                pdf_path, page_num, paragraph = result
+                                file_name = os.path.basename(pdf_path)
+                                link_text = f"Fichier : {file_name}, Page : {page_num}"
+
+                                with st.expander(link_text):
+                                    st.write(f"**{link_text}**")
+                                    st.write(f"{paragraph}")
+                                    img_data = extract_page(pdf_path, page_num, paragraph)
+                                    st.image(img_data, caption=f"Page {page_num} de {file_name}")
+                                    with open(pdf_path, "rb") as pdf_file:
+                                        st.download_button(
+                                            label="Télécharger le PDF complet",
+                                            data=pdf_file,
+                                            file_name=file_name,
+                                            key=f"download_button_{i}"
+                                        )
+                            else:
+                                st.error(f"Résultat inattendu au résultat {i}: {result}")
                     else:
-                        # Recherche avec le texte corrigé uniquement si aucun résultat n'est trouvé avec le texte original
+                        # Recherche avec texte corrigé uniquement si aucun résultat avec le texte brut
                         corrected_results = search_and_save_to_db(corrected_search_text, corrected_search_text, selected_category)
 
                         if corrected_results:
@@ -266,12 +283,13 @@ def show_main_content():
                                                 label="Télécharger le PDF complet",
                                                 data=pdf_file,
                                                 file_name=file_name,
-                                                key=f"download_button_{i}"
+                                                key=f"download_button_corrected_{i}"
                                             )
                                 else:
                                     st.error(f"Résultat inattendu au résultat {i}: {result}")
                         else:
                             st.write("Aucun résultat trouvé.")
+
 
 
 
